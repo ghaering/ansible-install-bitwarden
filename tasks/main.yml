@@ -1,0 +1,24 @@
+---
+- name: Ensure destination directory exists
+  ansible.builtin.file:
+    path: "{{ appimage_directory }}"
+    state: directory
+    mode: '0755'
+
+- name: Download Bitwarden AppImage
+  ansible.builtin.get_url:
+    url: "https://vault.bitwarden.com/download/?app=desktop&platform=linux&variant=appimage"
+    dest: "{{ appimage_directory }}/bitwarden.AppImage"
+    mode: '0755'
+    force: yes
+
+- name: Make Bitwarden AppImage executable
+  ansible.builtin.file:
+    path: "{{ appimage_directory }}/bitwarden.AppImage"
+    mode: '0755'
+
+- name: Create symbolic link in /usr/local/bin for easy execution
+  ansible.builtin.file:
+    src: "{{ appimage_directory }}/bitwarden.AppImage"
+    dest: "/usr/local/bin/bitwarden"
+    state: link
